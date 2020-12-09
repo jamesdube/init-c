@@ -44,15 +44,15 @@ tcpProbe(){
 
   while [ "$pong" != true ]; do
 
-    success=$(nc $host 1 &> /dev/null; echo $?)
-
-    if [ $success -eq 1 ]; then
+    if ( nc -zv $host $port 2>&1 >/dev/null ); then
       echo "Probe successful connected to $host on port $port"
+      pong=true
       exit 0
     else
-      echo "Probe failed got status ($status), backing off for 5 seconds"
+      echo "Probe failed, backing off for 5 seconds"
       sleep 5
     fi
+
   done
 
 }
