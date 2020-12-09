@@ -9,13 +9,13 @@ Init Container for probing dependant services in Kubernetes
 
 In certain use cases you would want to delay starting up your deployment by checking if
 dependent services are up either through http or tcp probing. This helps your services to boot 
-up in the correct order, for reference check out this [example](#). Particular use cases
+up in the correct order, for reference check out this [example](https://github.com/jamesdube/init-c/blob/main/examples). Particular use cases
 include service discovery and fetching startup configs for spring boot applications.
 
 ## Features
 
  - [x] HTTP probe
- - [ ] TCP Probe
+ - [x] TCP Probe
  - [ ] DNS Probe
     
 ## Usage
@@ -50,7 +50,7 @@ spec:
         - containerPort: 8000
 ```
 
-## Usage
+## Local Testing
 
 ```shell script
 docker run --rm jdube/init-c http -u https://www.google.com
