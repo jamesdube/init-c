@@ -39,6 +39,7 @@ spec:
       labels:
         app: frontend
     spec:
+      # Add your init container here            
       initContainers:
       - name: init-c
         image: jdube/init-c
@@ -50,7 +51,7 @@ spec:
         - containerPort: 8000
 ```
 
-## Usage
+## Testing
 
 ```shell script
 docker run --rm jdube/init-c http -u https://www.google.com

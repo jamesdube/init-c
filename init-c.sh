@@ -1,50 +1,124 @@
 #!/bin/sh
 
-usage() {
-    echo -e "Usage: init-c [PROBE] [OPTIONS]\n"
-
-    echo -e "PROBE"
-    echo -e "  http     \t perform a http request to a given url"
-    echo -e "  tcp      \t check if the specified tcp port is open\n"
-
-    echo -e "Options"
-    echo -e "  --url    \t (http) the full url"
-    echo -e "  --ip     \t (tcp) the target ip address"
-    echo -e "  --port   \t (tcp) the target port"
-    1>&2; exit 1;
+canShift(){
+    if [ "$1" != "" ] ; then
+        shift # past value
+    fi
 }
+
+usage() {
+    cat << EOF
+
+        USAGE: init-c [PROBE] [ARGS]
+
+        PROBE
+
+          http  Probe for http resources using full url
+          tcp   IP and port probe
+
+        ARGS
+
+          -i    IP address for tcp probe
+          -p    Port for tcp probe
+          -u    The full url for http probe
+
+EOF
+exit 1
+}
+
 
 httpProbe(){
-  if [[ $1 =~ ^http[s]?://[^/]+ ]]; then
-    URL=$1
-  else
-    echo "invalid url : $URL"
-  fi
-  echo "probe -> $1"
-#  for (( ; ; ))
-#  do STATUS=$(curl -L -s -o /dev/null -w '%{http_code}' $URL)
-#     if [ $STATUS -eq 200 ]; then
-#       echo "Probe successful got a $STATUS "
-#       break
-#      else
-#        echo "Probe failed got status -> $STATUS"
-#      fi
-#      echo "backing off for 5 seconds"
-#  done
+
+    echo "http probe -> $URL"
+
+    if [ -z "${URL}" ] ; then
+        echo 'Please set the url eg. -u https://google.com'
+        usage
+    else
+        while true; do
+
+            status=$(curl -L -s -o /dev/null -w '%{http_code}' "$URL")
+
+            if [ "$status" -eq 200 ]; then
+                echo "Probe successful got $status"
+                exit 0
+            else
+                echo "Probe failed got status ($status), backing off for 5 seconds"
+                sleep 5
+            fi
+        done
+        exit 0
+    fi
+
 }
 
+tcpProbe(){
 
-if [ "$1" != "http" ]; then
-    usage
-fi
+     echo "tcp probe -> $IP:$PORT"
+
+    if [ -z "${IP}" ] || [ -z "${PORT}" ] ; then
+        echo "Please set the ip and port eg. -i 127.0.0.1 -p 80"
+        usage
+    else
+        while [ "$pong" != true ]; do
+
+            if ( nc -z "$IP" "$PORT" 2>&1 >/dev/null ); then
+              echo "Probe successful connected to $IP on port $PORT"
+              pong=true
+              exit 0
+            else
+              echo "Probe failed, backing off for 5 seconds"
+              sleep 5
+            fi
+
+          done
+        exit 0
+    fi
+
+}
+
+parseArgs(){
+
+    for arg in "$@"
+    do
+    case $arg in
+        -i|--ip)
+            IP="$2"
+            shift # past argument
+            canShift "$2"
+            ;;
+        -p|--port)
+            PORT="$2"
+            shift # past argument
+            canShift "$2"
+            ;;
+        -u|--url)
+            URL="$2"
+            shift # past argument
+            canShift "$2"
+            ;;
+        --default)
+            DEFAULT=YES
+            shift # past argument
+            ;;
+        *)    # unknown option
+    #        POSITIONAL+="$1" # save it in an array for later
+            shift # past argument
+            ;;
+    esac
+    done
+}
+
+parseArgs "$@"
 
 PROBE=$1
 
-if [ "$PROBE" == "http" ] ; then
-    if [[ "$2" =~ ^("-u"|"--url")$ ]]; then
-        httpProbe $3
-    else
-        echo "$2 is not a supported argument for http probe"
-        usage
-    fi
+if [ "$PROBE" = "http" ]; then
+    httpProbe "$@"
 fi
+
+if [ "$PROBE" = "tcp" ]; then
+    tcpProbe
+fi
+
+usage
