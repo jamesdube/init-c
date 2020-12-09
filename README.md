@@ -1,6 +1,6 @@
 # init-c
 
-10kb Init Container for Kubernetes for probing dependant services
+Init Container for probing dependant services in Kubernetes
 
 ## About
 
