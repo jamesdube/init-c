@@ -2,6 +2,9 @@
 
 Init Container for probing dependant services in Kubernetes
 
+[![Issues](https://img.shields.io/github/issues/jamesdube/init-c)](https://img.shields.io/github/issues/jamesdube/init-c)
+
+
 ## About
 
 In certain use cases you would want to delay starting up your deployment by checking if

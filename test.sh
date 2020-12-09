@@ -37,7 +37,23 @@ httpProbe(){
 
 tcpProbe(){
 
+  host=10.0.0.1
+  port=80
+
   echo "tcp probe"
+
+  while [ "$pong" != true ]; do
+
+    success=$(nc $host 1 &> /dev/null; echo $?)
+
+    if [ $success -eq 1 ]; then
+      echo "Probe successful connected to $host on port $port"
+      exit 0
+    else
+      echo "Probe failed got status ($status), backing off for 5 seconds"
+      sleep 5
+    fi
+  done
 
 }
 
