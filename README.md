@@ -51,7 +51,7 @@ spec:
         - containerPort: 8000
 ```
 
-## Testing
+## Local Testing
 
 ```shell script
 docker run --rm jdube/init-c http -u https://www.google.com
