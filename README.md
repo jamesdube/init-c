@@ -2,7 +2,7 @@
 
 Init Container for probing dependant services in Kubernetes
 
-[![Issues](https://img.shields.io/github/issues/jamesdube/init-c)](https://img.shields.io/github/issues/jamesdube/init-c)
+[![Issues](https://img.shields.io/github/issues/jamesdube/init-c)](https://img.shields.io/github/issues/jamesdube/init-c) ![Docker Pulls](https://img.shields.io/docker/pulls/jdube/init-c) ![Docker Image Version (latest by date)](https://img.shields.io/docker/v/jdube/init-c)
 
 
 ## About
