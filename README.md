@@ -15,7 +15,7 @@ include service discovery and fetching startup configs for spring boot applicati
 ## Features
 
  - [x] HTTP probe
- - [ ] TCP Probe
+ - [x] TCP Probe
  - [ ] DNS Probe
     
 ## Usage
@@ -43,7 +43,7 @@ spec:
       initContainers:
       - name: init-c
         image: jdube/init-c
-        command: ['http', '-u', "http://backend.default"]
+        args: ['http', '-u', "http://backend.default"]
       containers:
       - name: frontend
         image: jdube/frontend
