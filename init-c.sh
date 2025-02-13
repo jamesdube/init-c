@@ -76,6 +76,27 @@ tcpProbe(){
     fi
 
 }
+dnsProbe(){
+
+    echo "dns probe -> $HOSTNAME"
+
+    if [ -z "${HOSTNAME}" ] ; then
+        echo 'Please set the hostname eg. -h google.com'
+        usage
+    else
+        while true; do
+            output=$(dig +short "$HOSTNAME")
+            if [ -n "$output" ]; then
+                echo "DNS probe successful for $HOSTNAME"
+                exit 0
+            else
+                echo "DNS probe failed for $HOSTNAME, backing off for 5 seconds"
+                sleep 5
+            fi
+        done
+        exit 0
+    fi
+}
 
 parseArgs(){
 
@@ -94,6 +115,11 @@ parseArgs(){
             ;;
         -u|--url)
             URL="$2"
+            shift # past argument
+            canShift "$2"
+            ;;
+        -h|--hostname)
+            HOSTNAME="$2"
             shift # past argument
             canShift "$2"
             ;;
@@ -119,6 +145,10 @@ fi
 
 if [ "$PROBE" = "tcp" ]; then
     tcpProbe
+fi
+
+if [ "$PROBE" = "dns" ]; then
+    dnsProbe
 fi
 
 usage
