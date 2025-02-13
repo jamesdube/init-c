@@ -15,12 +15,15 @@ usage() {
 
           http  Probe for http resources using full url
           tcp   IP and port probe
+          dns   Hostname probe
 
         ARGS
 
           -i    IP address for tcp probe
           -p    Port for tcp probe
           -u    The full url for http probe
+          -h    Hostname for dns probe
+          -t    Timeout in seconds for probe
 
 EOF
 exit 1
@@ -37,7 +40,7 @@ httpProbe(){
     else
         while true; do
 
-            status=$(curl -L -s -o /dev/null -w '%{http_code}' "$URL")
+            status=$(curl --max-time ${TIMEOUT:-10} -L -s -o /dev/null -w '%{http_code}' "$URL")
 
             if [ "$status" -eq 200 ]; then
                 echo "Probe successful got $status"
@@ -62,7 +65,7 @@ tcpProbe(){
     else
         while [ "$pong" != true ]; do
 
-            if ( nc -z "$IP" "$PORT" 2>&1 >/dev/null ); then
+            if ( nc -z -w ${TIMEOUT:-10} "$IP" "$PORT" 2>&1 >/dev/null ); then
               echo "Probe successful connected to $IP on port $PORT"
               pong=true
               exit 0
@@ -120,6 +123,11 @@ parseArgs(){
             ;;
         -h|--hostname)
             HOSTNAME="$2"
+            shift # past argument
+            canShift "$2"
+            ;;
+        -t|--timeout)
+            TIMEOUT="$2"
             shift # past argument
             canShift "$2"
             ;;
