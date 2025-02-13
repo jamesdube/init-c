@@ -16,7 +16,7 @@ include service discovery and fetching startup configs for spring boot applicati
 
  - [x] HTTP probe
  - [x] TCP Probe
- - [ ] DNS Probe
+ - [x] DNS Probe
     
 ## Usage
 
@@ -55,6 +55,20 @@ spec:
 
 ```shell script
 docker run --rm jdube/init-c http -u https://www.google.com
+```
+## DNS Probe Usage
+
+To use the DNS probe, specify `dns` as the probe type and use the `-h` or `--hostname` argument to provide the hostname to probe.
+
+```yaml
+initContainers:
+  - name: init-c
+    image: jdube/init-c
+    args: ['dns', '-h', "google.com"]
+```
+
+```shell script
+docker run --rm jdube/init-c dns -h google.com
 ```
 
 ## Contributing
