@@ -71,6 +71,21 @@ initContainers:
 docker run --rm jdube/init-c dns -h google.com
 ```
 
+## TCP Probe Usage
+
+To use the TCP probe, specify `tcp` as the probe type and use the `-i` or `--ip` argument to provide the IP address and `-p` or `--port` argument to provide the port to probe.
+
+```yaml
+initContainers:
+  - name: init-c
+    image: jdube/init-c
+    args: ['tcp', '-i', "database.default", '-p', "5432"]
+```
+
+```shell script
+docker run --rm jdube/init-c tcp -i 127.0.0.1 -p 80
+```
+
 ## Contributing
 
 Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
